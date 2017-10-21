@@ -1,26 +1,21 @@
 #This contains the deployable content for the whole project
 import falcon
-import time
+#import time
 
-#from classes import Sms
-#from resources import SendTransactionalSmsResource,SendBatchSmsResource,CheckSmsDeliveryStatusResource
-
-#from middlewares import ujumbeMiddleWare
-#from handlers import api_error_handler
+from utils.middlewares import APIMiddleWare
+from utils.handlers import api_error_handler
 
 from users.urls import patterns as users_patterns
+from apps.urls import patterns as apps_patterns
 
 
-URL_PATTERNS=[users_patterns,]
+URL_PATTERNS=[users_patterns,apps_patterns]
 
 
 
 def get_app():
-    #app=falcon.API(middleware=[ujumbeMiddleWare,],)
-    app=falcon.API()
-
-
-
+    app=falcon.API(middleware=[APIMiddleWare(),],)
+   
     #add roots
     for up in URL_PATTERNS:
         for i in up:
@@ -28,7 +23,7 @@ def get_app():
              #print("Link URL ",i[0],)
     
     #add cutom error handler
-    #api.add_error_handler(falcon.HTTPError,handler=api_error_handler)
+    app.add_error_handler(falcon.HTTPError,handler=api_error_handler)
     
     return app
 
