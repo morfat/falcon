@@ -18,6 +18,9 @@ class Model(object):
         return self.db().fetchall(sql=sql)
 
     def one(self,pk):
+        if not isinstance(pk,int):
+            pk="'%s'"%(str(pk))
+
         sql="SELECT %s FROM %s WHERE %s=%s"%(self.get_fields(),self.db_table,self.pk,pk)
         return self.db().fetchone(sql=sql)
 

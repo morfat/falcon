@@ -55,17 +55,24 @@ class Db:
 
     def fetchone(self,cursor=None,sql=None):
         "Return one row from a cursor as a dict"
+        result={}
         if not cursor:
             cursor=self.cursor()
             if sql:
-                cursor.execute(sql)
-            results=dict(zip([col[0] for col in cursor.description], cursor.fetchone()))
+                r=cursor.execute(sql)
+            else:
+                r=cursor.fetchone()
+            if cursor.rowcount:
+                result=dict(zip([col[0] for col in cursor.description], r))
             cursor.close()
-            return results
         else:
             if sql:
-                cursor.execute(sql)
-            return dict(zip([col[0] for col in cursor.description], cursor.fetchone()))
+                r=cursor.execute(sql)
+            else:
+                r=cursor.fetchone()
+            if cursor.rowcount:
+                result=dict(zip([col[0] for col in cursor.description], r))
+        return result
 
 
 
