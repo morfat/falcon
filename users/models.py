@@ -1,5 +1,13 @@
-class User:
-    fields=['id','email','password','is_active','']
+from utils.models import Model 
 
-    def __init__(self,db):
-        self.exclude=['id','email','password','is_active','']
+
+
+class User(Model):
+    db_table='users'
+    fields=['id','first_name','last_name','app','email','token'] #display fields
+
+    
+
+
+
+
