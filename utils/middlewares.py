@@ -42,6 +42,9 @@ class UserMiddleWare(APIMiddleWare):
         self._db=Db() #create db connection and Db object
         authentication=Authentication(self._db)
         token=req.get_header('Authorization',required=True)
+        token=token[5:].strip() #to strip off the Token value in token
+        
+
         #authenticate as per given credentials
         self._user=authentication.authenticate_user(token=token)
 
