@@ -59,17 +59,17 @@ class Db:
         if not cursor:
             cursor=self.cursor()
             if sql:
-                r=cursor.execute(sql)
-            else:
-                r=cursor.fetchone()
+                cursor.execute(sql)
+            r=cursor.fetchone()
             if cursor.rowcount:
+                
+
                 result=dict(zip([col[0] for col in cursor.description], r))
             cursor.close()
         else:
             if sql:
                 r=cursor.execute(sql)
-            else:
-                r=cursor.fetchone()
+            r=cursor.fetchone()
             if cursor.rowcount:
                 result=dict(zip([col[0] for col in cursor.description], r))
         return result

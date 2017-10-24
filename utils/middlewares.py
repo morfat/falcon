@@ -1,8 +1,9 @@
 from .database import Db
 
 from .authentication import Authentication
+import falcon
 
-class APIMiddleWare:
+class BaseMiddleWare:
 
     def __init__(self,):
         self._db=None
@@ -12,17 +13,12 @@ class APIMiddleWare:
 
     def process_request(self,req,resp):
         self._db=Db() #create db connection and Db object
-        authentication=Authentication(self._db)
-        token=req.get_header('Authorization',required=False)
-        app_key=req.get_header('app-key',required=False)
-        app_secret=req.get_header('app-secret',required=False)
+        self._app,self._user=self.authenticate(req)
+        
+        if not (self._app or self._user):
+            raise falcon.HTTPUnauthorized(title='Authentication not implemented',description='Authenticate user or app credentials. As per the middleware used')
 
-        #authenticate as per given credentials
-        if token:
-            self._user=authentication.authenticate_user(token=token)
-        elif app_key and app_secret:
-            self._app=authentication.authenticate_app(app_key=app_key,app_secret=app_secret)
-
+       
 
 
     def process_resource(self,req,resp,resource,params):
@@ -36,10 +32,19 @@ class APIMiddleWare:
         self._db.connection().close()
 
 
+    def authenticate(self,request):
+        """To be implemented by inheriting classes. To return app and user"""
+        pass
 
-class UserMiddleWare(APIMiddleWare):
-    def process_request(self,req,resp):
-        self._db=Db() #create db connection and Db object
+    
+
+    def get_db(self):
+        return self._db
+
+  
+
+class UserMiddleWare(BaseMiddleWare):
+    def authenticate(self):
         authentication=Authentication(self._db)
         token=req.get_header('Authorization',required=True)
         token=token[5:].strip() #to strip off the Token value in token
@@ -49,13 +54,13 @@ class UserMiddleWare(APIMiddleWare):
         self._user=authentication.authenticate_user(token=token)
 
 
-class AppMiddleWare(APIMiddleWare):
-    def process_request(self,req,resp):
-        self._db=Db() #create db connection and Db object
-        authentication=Authentication(self._db)
-        app_key=req.get_header('app-key',required=True)
-        app_secret=req.get_header('app-secret',required=True)
-
+class AppMiddleWare(BaseMiddleWare):
+    def authenticate(self,request):
+        authentication=Authentication(self.get_db())
+        app_key=request.get_header('app-key',required=True)
+        app_secret=request.get_header('app-secret',required=True)
         #authenticate as per given credentials
-        self._app=authentication.authenticate_app(app_key=app_key,app_secret=app_secret)
+        app=authentication.authenticate_app(app_key=app_key,app_secret=app_secret)
+        return (app,None,)
+
 

@@ -2,7 +2,7 @@
 import falcon
 #import time
 
-from utils.middlewares import APIMiddleWare,UserMiddleWare,AppMiddleWare
+from utils.middlewares import UserMiddleWare,AppMiddleWare
 from utils.handlers import api_error_handler
 
 from users.urls import patterns as users_patterns
@@ -14,7 +14,7 @@ URL_PATTERNS=[users_patterns,apps_patterns]
 
 
 def get_app():
-    app=falcon.API(middleware=[UserMiddleWare(),],)
+    app=falcon.API(middleware=[AppMiddleWare(),],)
    
     #add roots
     for up in URL_PATTERNS:
