@@ -1,5 +1,4 @@
 import falcon
-from users.models import User
 from apps.models import App
 
 class Authentication:
@@ -22,18 +21,5 @@ class Authentication:
             raise falcon.HTTPUnauthorized(title='Authentication Failed ',description='Valid app-key and app-secret are  needed')
         return app
 
-
-    def authenticate_user(self,token):
-        user=User(self._db)
-        user.pk='token'
-        user=user.one(pk=token)
-
-        if not user:
-            raise falcon.HTTPUnauthorized(title='Authentication Failed ',description='Valid API token is  needed')
-            
-        elif not user.get('is_active'):
-            raise falcon.HTTPForbidden(title='Permission Denied',description='Your user account is inactive')
-
-        return user
 
 

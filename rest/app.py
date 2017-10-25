@@ -2,14 +2,13 @@
 import falcon
 #import time
 
-from utils.middlewares import UserMiddleWare,AppMiddleWare
+from utils.middlewares import AppMiddleWare
 from utils.handlers import api_error_handler
 
-from users.urls import patterns as users_patterns
 from apps.urls import patterns as apps_patterns
 
 
-URL_PATTERNS=[users_patterns,apps_patterns]
+URL_PATTERNS=[apps_patterns]
 
 
 
